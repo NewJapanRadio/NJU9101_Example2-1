@@ -109,6 +109,7 @@ int main() {
     i2c.read((SlaveAddr << 1) | 0x01, readBuffer, 1);
   } while ((readBuffer[0] & 0x10) != 0x10);
 
+  // correction coefficients
   // SCAL1B = 0x2AAB
   writeBuffer[0] = SCAL1B0;
   writeBuffer[1] = 0x2A;
@@ -130,24 +131,20 @@ int main() {
   writeBuffer[2] = 0xAB;
   i2c.write((SlaveAddr << 1), writeBuffer, 3);
 
-  // BIASSWA = 1, BIASSWB = 1, PRE_BIAS = 0b1000
+  // configurations
+  // BIASSWA = 1, BIASSWB = 1
   writeBuffer[0] = BLKCONN0;
-  writeBuffer[1] = 0x38;
+  writeBuffer[1] = 0x30;
   i2c.write((SlaveAddr << 1), writeBuffer, 2);
 
-  // OPA_BIAS = 0b100, OPB_BIAS = 0b10000
+  // OPA_BIAS = 0b100(1.0[V]), OPB_BIAS = 0b10000(1.0[V])
   writeBuffer[0] = BLKCONN1;
   writeBuffer[1] = 0x90;
   i2c.write((SlaveAddr << 1), writeBuffer, 2);
 
-  // BIASSWN = 1, PAMPSEL = 1, BIASSEL = 1
+  // BIASSWN = 1, PAMPSEL = 1
   writeBuffer[0] = BLKCONN2;
-  writeBuffer[1] = 0x0E;
-  i2c.write((SlaveAddr << 1), writeBuffer, 2);
-
-  // ADCCHOP = 1
-  writeBuffer[0] = ADCCONV;
-  writeBuffer[1] = 0x40;
+  writeBuffer[1] = 0x0C;
   i2c.write((SlaveAddr << 1), writeBuffer, 2);
 
   // BIAS_RES = ON, OPA = ON, OPB = ON, OSC = OFF
@@ -164,7 +161,7 @@ int main() {
     writeBuffer[1] = 0x0A; // MEAS = 1, MEAS_SEL = 01, MEAS_SC = 0
     i2c.write((SlaveAddr << 1), writeBuffer, 2);
 
-    // pollign RDYB
+    // pollign MEAS
     writeBuffer[0] = STATUS;
     do {
       i2c.write((SlaveAddr << 1), writeBuffer, 1);
