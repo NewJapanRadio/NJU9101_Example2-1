@@ -16,6 +16,10 @@
         WAKEUP_OSC [label="BLKCTRL.OSC = 1"];
         WAIT_CLKRUN [label="STATUS.CLKRUN == 1"];
         WAIT_MEAS [label="CTRL.MEAS == 0"];
+        MEAS_LOOP_HEAD [label="Start of Measurement" shape=house]
+        MEAS_LOOP_TAIL [label="End of Measurement" shape=invhouse]
+        READ_ADC_DATA [label="Read AMPDATA"]
+        RESULT [label="Display AMPDATA" shape=parallelogram]
         COEFF0 [label="SCAL1B = 0x2AAB"];
         COEFF1 [label="SCAL2B = 0x2AAB"];
         COEFF2 [label="SCAL3B = 0x2AAB"];
@@ -36,7 +40,9 @@
         MEAS_LOOP_HEAD->START_MEAS [weight=5];
         START_MEAS->WAIT_MEAS [weight=5];
         WAIT_MEAS->WAIT_MEAS [label="no" tailport=e headport=n label="no"];
-        WAIT_MEAS->MEAS_LOOP_TAIL [label="yes" tailport=s headport=n weight=5];
+        WAIT_MEAS->READ_ADC_DATA [label="yes" tailport=s headport=n weight=5];
+        READ_ADC_DATA->RESULT [weight=5];
+        RESULT->MEAS_LOOP_TAIL [weight=5];
         MEAS_LOOP_TAIL->MEAS_LOOP_HEAD [tailport=s headport=n];
         COEFF0->COEFF1->COEFF2->COEFF3 [weight=3];
         {rank=same;COEFF0;CORRECTION_EFFICIENT}
