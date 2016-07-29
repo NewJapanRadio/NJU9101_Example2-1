@@ -7,6 +7,8 @@
 ![](http://g.gravizo.com/g?
 digraph G {
 graph [ranksep=0.4]
+node [shape=none] OSC_RUN
+node [shape=point] OSC_STOP
 node [shape=ellipse] START
 node [shape=diamond] WAIT_BOOT WAIT_CLKRUN WAIT_MEAS
 node [shape=box]
@@ -32,6 +34,8 @@ CONF1 [label="BLKCONN1.OPA_BIAS = any\\nBLKCONN1.OPB_BIAS = any"]
 CONF2 [label="BLKCONN2.BIASSWN = 1\\nBLKCONN2.PAMPSEL = 1"]
 CONF3 [label="BLKCTRL.BIAS_RES = 1\\nBLKCTRL.OPA = 1\\nBLKCTRL.OPB = 1\\nBLKCTRL.OSC = 0"]
 CONCAT_AMPDATA [label="AMPDATA0 << 8\\n+AMPDATA1"]
+OSC_RUN [label="OSC is needed\\nfor writing to configuration registers"]
+OSC_STOP [label=""]
 START->INIT->RESET
 RESET->WAIT_BOOT [headport=n]
 WAIT_BOOT->WAIT_BOOT [label="no" tailport=e headport=n]
@@ -55,5 +59,8 @@ CONF0->CONF1->CONF2->CONF3 [weight=3]
 {rank=same;CONFIGURATION;CONF0}
 READ_ADC_DATA->CONCAT_AMPDATA [arrowhead=none style=dashed tailports=e headports=w]
 {rank=same;READ_ADC_DATA;CONCAT_AMPDATA}
+OSC_RUN->OSC_STOP
+{rank=same;OSC_RUN;WAKEUP_OSC}
+{rank=same;OSC_STOP;CONFIGURATION}
 }
 )
