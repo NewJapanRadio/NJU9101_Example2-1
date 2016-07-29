@@ -31,6 +31,7 @@ CONF0 [label="BLKCONN0.BIASSWA = 1\\nBLKCONN0.BIASSWB = 1"];
 CONF1 [label="BLKCONN1.OPA_BIAS = any\\nBLKCONN1.OPB_BIAS = any"];
 CONF2 [label="BLKCONN2.BIASSWN = 1\\nBLKCONN2.PAMPSEL = 1"];
 CONF3 [label="BLKCTRL.BIAS_RES = ON\\nBLKCTRL.OPA = ON\\nBLKCTRL.OPB = ON\\nBLKCTRL.OSC = OFF"];
+CONCAT_AMPDATA [label="AMPDATA0 << 8\\n+AMPDATA1"]
 START->INIT->RESET;
 RESET->WAIT_BOOT [headport=n];
 WAIT_BOOT->WAIT_BOOT [label="no" tailport=e headport=n];
@@ -46,11 +47,13 @@ WAIT_MEAS->READ_ADC_DATA [label="yes" tailport=s headport=n weight=5];
 READ_ADC_DATA->RESULT [weight=5];
 RESULT->MEAS_LOOP_TAIL [weight=5];
 MEAS_LOOP_TAIL->MEAS_LOOP_HEAD [tailport=s headport=n];
-COEFF0->COEFF1->COEFF2->COEFF3 [weight=3];
-{rank=same;COEFF0;CORRECTION_EFFICIENT}
 CORRECTION_EFFICIENT->COEFF0 [arrowhead=none style=dashed tailports=e headports=w];
-CONF0->CONF1->CONF2->CONF3 [weight=3];
-{rank=same;CONF0;CONFIGURATION}
+COEFF0->COEFF1->COEFF2->COEFF3 [weight=3];
+{rank=same;CORRECTION_EFFICIENT;COEFF0}
 CONFIGURATION->CONF0 [arrowhead=none style=dashed tailports=e headports=w];
+CONF0->CONF1->CONF2->CONF3 [weight=3];
+{rank=same;CONFIGURATION;CONF0}
+READ_ADC_DATA->CONCAT_AMPDATA [arrowhead=none style=dashed tailports=e headports=w];
+{rank=same;READ_ADC_DATA;CONCAT_AMPDATA}
 }
 )
